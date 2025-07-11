@@ -68,14 +68,12 @@ public class ClienteService {
                 });
     }
     
-    // Eliminar cliente (cambiar estado a INACTIVO)
+    // Eliminar cliente (eliminación física)
     public boolean eliminarCliente(Long id) {
         log.info("Eliminando cliente con ID: {}", id);
-        
         return clienteRepository.findById(id)
                 .map(cliente -> {
-                    cliente.setEstado(Cliente.EstadoCliente.INACTIVO);
-                    clienteRepository.save(cliente);
+                    clienteRepository.delete(cliente);
                     return true;
                 })
                 .orElse(false);

@@ -91,14 +91,12 @@ public class MedicamentoService {
                 });
     }
     
-    // Eliminar medicamento (cambiar estado a DESCONTINUADO)
+    // Eliminar medicamento (eliminación física)
     public boolean eliminarMedicamento(Long id) {
         log.info("Eliminando medicamento con ID: {}", id);
-        
         return medicamentoRepository.findById(id)
                 .map(medicamento -> {
-                    medicamento.setEstado(Medicamento.EstadoMedicamento.DESCONTINUADO);
-                    medicamentoRepository.save(medicamento);
+                    medicamentoRepository.delete(medicamento);
                     return true;
                 })
                 .orElse(false);
