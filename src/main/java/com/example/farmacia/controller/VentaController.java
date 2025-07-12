@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/ventas")
+@RequestMapping("/ventas")
 @RequiredArgsConstructor
 @Slf4j
 public class VentaController {
@@ -103,12 +103,12 @@ public class VentaController {
         return ResponseEntity.ok(ventas);
     }
     
-    // GET /api/ventas/rango-fechas - Obtener ventas por rango de fechas
-    @GetMapping("/rango-fechas")
+    // Obtener ventas por rango de fechas
+    @GetMapping("/rango")
     public ResponseEntity<List<Venta>> obtenerVentasPorRangoFechas(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaInicio,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaFin) {
-        log.info("GET /api/ventas/rango-fechas - Obteniendo ventas por rango de fechas");
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
+        log.info("GET /api/ventas/rango - Obteniendo ventas por rango de fechas");
         List<Venta> ventas = ventaService.obtenerVentasPorRangoFechas(fechaInicio, fechaFin);
         return ResponseEntity.ok(ventas);
     }
@@ -129,22 +129,22 @@ public class VentaController {
         return ResponseEntity.ok(ventas);
     }
     
-    // GET /api/ventas/total - Calcular total de ventas por período
-    @GetMapping("/total")
+    // Calcular total de ventas por período
+    @GetMapping("/total-por-periodo")
     public ResponseEntity<BigDecimal> calcularTotalVentasPorPeriodo(
-            @RequestParam LocalDateTime fechaInicio,
-            @RequestParam LocalDateTime fechaFin) {
-        log.info("GET /api/ventas/total - Calculando total de ventas del {} al {}", fechaInicio, fechaFin);
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
+        log.info("GET /api/ventas/total-por-periodo - Calculando total de ventas por período");
         BigDecimal total = ventaService.calcularTotalVentasPorPeriodo(fechaInicio, fechaFin);
         return ResponseEntity.ok(total);
     }
     
-    // GET /api/ventas/promedio-dia - Obtener promedio de ventas por día
-    @GetMapping("/promedio-dia")
+    // Calcular promedio de ventas por día
+    @GetMapping("/promedio-por-dia")
     public ResponseEntity<BigDecimal> calcularPromedioVentasPorDia(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaInicio,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaFin) {
-        log.info("GET /api/ventas/promedio-dia - Calculando promedio de ventas por día");
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
+        log.info("GET /api/ventas/promedio-por-dia - Calculando promedio de ventas por día");
         BigDecimal promedio = ventaService.calcularPromedioVentasPorDia(fechaInicio, fechaFin);
         return ResponseEntity.ok(promedio);
     }

@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,11 +41,11 @@ public interface MedicamentoRepository extends JpaRepository<Medicamento, Long> 
     
     // Buscar medicamentos próximos a caducar
     @Query("SELECT m FROM Medicamento m WHERE m.fechaCaducidad <= :fechaLimite AND m.estado = 'ACTIVO'")
-    List<Medicamento> findMedicamentosProximosACaducar(@Param("fechaLimite") LocalDateTime fechaLimite);
+    List<Medicamento> findMedicamentosProximosACaducar(@Param("fechaLimite") LocalDate fechaLimite);
     
     // Buscar medicamentos caducados
     @Query("SELECT m FROM Medicamento m WHERE m.fechaCaducidad < :fechaActual AND m.estado = 'ACTIVO'")
-    List<Medicamento> findMedicamentosCaducados(@Param("fechaActual") LocalDateTime fechaActual);
+    List<Medicamento> findMedicamentosCaducados(@Param("fechaActual") LocalDate fechaActual);
     
     // Buscar medicamentos que requieren receta
     List<Medicamento> findByRequiereRecetaTrue();

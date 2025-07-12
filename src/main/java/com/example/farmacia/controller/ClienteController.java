@@ -13,9 +13,10 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/clientes")
+@RequestMapping("/clientes")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:5174", "http://localhost:3000"})
 public class ClienteController {
     
     private final ClienteService clienteService;

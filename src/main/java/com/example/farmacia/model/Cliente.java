@@ -1,6 +1,7 @@
 package com.example.farmacia.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -12,12 +13,13 @@ import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "clientes")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -60,7 +62,7 @@ public class Cliente {
     private String dni;
     
     @Column
-    private LocalDateTime fechaNacimiento;
+    private LocalDate fechaNacimiento;
     
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -68,14 +70,14 @@ public class Cliente {
     
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    private LocalDateTime fechaCreacion;
+    private LocalDate fechaCreacion;
     
     @UpdateTimestamp
     @Column(nullable = false)
-    private LocalDateTime fechaActualizacion;
+    private LocalDate fechaActualizacion;
     
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonManagedReference("cliente-ventas")
     private List<Venta> ventas = new ArrayList<>();
     
     public enum EstadoCliente {

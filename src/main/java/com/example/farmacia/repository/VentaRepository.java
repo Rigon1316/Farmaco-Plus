@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,7 +20,7 @@ public interface VentaRepository extends JpaRepository<Venta, Long> {
     List<Venta> findByMetodoPago(Venta.MetodoPago metodoPago);
     
     // Búsqueda por rango de fechas (útil para la IA)
-    List<Venta> findByFechaVentaBetween(LocalDateTime fechaInicio, LocalDateTime fechaFin);
+    List<Venta> findByFechaVentaBetween(LocalDate fechaInicio, LocalDate fechaFin);
     
     // Consulta flexible para múltiples criterios (útil para la IA)
     @Query("SELECT v FROM Venta v WHERE " +
@@ -33,7 +33,7 @@ public interface VentaRepository extends JpaRepository<Venta, Long> {
             @Param("clienteId") Long clienteId,
             @Param("estado") Venta.EstadoVenta estado,
             @Param("metodoPago") Venta.MetodoPago metodoPago,
-            @Param("fechaInicio") LocalDateTime fechaInicio,
-            @Param("fechaFin") LocalDateTime fechaFin
+            @Param("fechaInicio") LocalDate fechaInicio,
+            @Param("fechaFin") LocalDate fechaFin
     );
 } 

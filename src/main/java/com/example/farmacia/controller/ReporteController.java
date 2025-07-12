@@ -12,12 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/reportes")
+@RequestMapping("/reportes")
 @RequiredArgsConstructor
 @Slf4j
 public class ReporteController {
@@ -45,9 +45,8 @@ public class ReporteController {
         dashboard.put("ventasDelMes", ventaService.obtenerVentasDelMes().size());
         
         // Calcular total de ventas del día
-        LocalDateTime inicioDia = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
-        LocalDateTime finDia = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59).withNano(999999999);
-        BigDecimal totalVentasDia = ventaService.calcularTotalVentasPorPeriodo(inicioDia, finDia);
+        LocalDate hoy = LocalDate.now();
+        BigDecimal totalVentasDia = ventaService.calcularTotalVentasPorPeriodo(hoy, hoy);
         dashboard.put("totalVentasDia", totalVentasDia);
         
         // Estadísticas de alertas
@@ -67,8 +66,8 @@ public class ReporteController {
     // GET /api/reportes/ventas - Reporte de ventas
     @GetMapping("/ventas")
     public ResponseEntity<Map<String, Object>> obtenerReporteVentas(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaInicio,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaFin) {
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate fechaInicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate fechaFin) {
         log.info("GET /api/reportes/ventas - Generando reporte de ventas");
         
         Map<String, Object> reporte = new HashMap<>();
@@ -168,8 +167,8 @@ public class ReporteController {
     // GET /api/reportes/rendimiento - Reporte de rendimiento
     @GetMapping("/rendimiento")
     public ResponseEntity<Map<String, Object>> obtenerReporteRendimiento(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaInicio,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaFin) {
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
         log.info("GET /api/reportes/rendimiento - Generando reporte de rendimiento");
         
         Map<String, Object> reporte = new HashMap<>();

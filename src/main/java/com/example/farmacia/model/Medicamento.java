@@ -1,6 +1,8 @@
 package com.example.farmacia.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -13,12 +15,13 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "medicamentos")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -74,7 +77,7 @@ public class Medicamento {
     
     @NotNull(message = "La fecha de caducidad es obligatoria")
     @Column(nullable = false)
-    private LocalDateTime fechaCaducidad;
+    private LocalDate fechaCaducidad;
     
     @NotBlank(message = "El código de barras es obligatorio")
     @Size(max = 50, message = "El código de barras no puede exceder 50 caracteres")
@@ -98,14 +101,14 @@ public class Medicamento {
     
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    private LocalDateTime fechaCreacion;
+    private LocalDate fechaCreacion;
     
     @UpdateTimestamp
     @Column(nullable = false)
-    private LocalDateTime fechaActualizacion;
+    private LocalDate fechaActualizacion;
     
     @OneToMany(mappedBy = "medicamento", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonManagedReference("medicamento-detalles")
     private List<DetalleVenta> detallesVenta = new ArrayList<>();
     
     public enum CategoriaMedicamento {
@@ -141,22 +144,26 @@ public class Medicamento {
     }
     
     // Método para verificar si el stock está bajo
+    @JsonIgnore
     public boolean isStockBajo() {
-        return stock <= stockMinimo;
+        return stock != null && stockMinimo != null && stock <= stockMinimo;
     }
     
     // Método para verificar si está agotado
+    @JsonIgnore
     public boolean isAgotado() {
-        return stock <= 0;
+        return stock != null && stock <= 0;
     }
     
     // Método para verificar si está próximo a caducar (30 días)
+    @JsonIgnore
     public boolean isProximoACaducar() {
-        return LocalDateTime.now().plusDays(30).isAfter(fechaCaducidad);
+        return fechaCaducidad != null && LocalDate.now().plusDays(30).isAfter(fechaCaducidad);
     }
     
     // Método para verificar si ya caducó
+    @JsonIgnore
     public boolean isCaducado() {
-        return LocalDateTime.now().isAfter(fechaCaducidad);
+        return fechaCaducidad != null && LocalDate.now().isAfter(fechaCaducidad);
     }
 } 

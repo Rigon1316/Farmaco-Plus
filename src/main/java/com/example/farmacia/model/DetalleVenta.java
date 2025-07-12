@@ -1,6 +1,7 @@
 package com.example.farmacia.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -14,6 +15,7 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "detalles_venta")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -29,12 +31,12 @@ public class DetalleVenta {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "venta_id", nullable = false)
-    @JsonBackReference
+    @JsonBackReference("venta-detalles")
     private Venta venta;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "medicamento_id", nullable = false)
-    @JsonBackReference
+    @JsonBackReference("medicamento-detalles")
     private Medicamento medicamento;
     
     @NotNull(message = "La cantidad es obligatoria")

@@ -1,5 +1,6 @@
 package com.example.farmacia.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -10,10 +11,11 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "alertas")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -54,7 +56,7 @@ public class Alerta {
     private Medicamento medicamento;
     
     @Column
-    private LocalDateTime fechaResolucion;
+    private LocalDate fechaResolucion;
     
     @Size(max = 500, message = "Las observaciones no pueden exceder 500 caracteres")
     @Column(length = 500)
@@ -62,7 +64,7 @@ public class Alerta {
     
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    private LocalDateTime fechaCreacion;
+    private LocalDate fechaCreacion;
     
     public enum TipoAlerta {
         STOCK_BAJO,
@@ -90,14 +92,14 @@ public class Alerta {
     // Método para marcar la alerta como resuelta
     public void resolver(String observaciones) {
         this.estado = EstadoAlerta.RESUELTA;
-        this.fechaResolucion = LocalDateTime.now();
+        this.fechaResolucion = LocalDate.now();
         this.observaciones = observaciones;
     }
     
     // Método para marcar la alerta como descartada
     public void descartar(String observaciones) {
         this.estado = EstadoAlerta.DESCARTADA;
-        this.fechaResolucion = LocalDateTime.now();
+        this.fechaResolucion = LocalDate.now();
         this.observaciones = observaciones;
     }
     
@@ -123,6 +125,6 @@ public class Alerta {
     
     // Método para obtener el tiempo transcurrido desde la creación
     public long getTiempoTranscurrido() {
-        return LocalDateTime.now().getNano() - fechaCreacion.getNano();
+        return java.time.temporal.ChronoUnit.DAYS.between(fechaCreacion, LocalDate.now());
     }
 } 

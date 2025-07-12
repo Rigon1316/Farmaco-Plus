@@ -2,6 +2,7 @@ package com.example.farmacia.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -14,12 +15,13 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "ventas")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -40,7 +42,7 @@ public class Venta {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_id", nullable = false)
-    @JsonBackReference
+    @JsonBackReference("cliente-ventas")
     private Cliente cliente;
     
     @NotNull(message = "El subtotal es obligatorio")
@@ -72,14 +74,14 @@ public class Venta {
     
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    private LocalDateTime fechaVenta;
+    private LocalDate fechaVenta;
     
     @UpdateTimestamp
     @Column(nullable = false)
-    private LocalDateTime fechaActualizacion;
+    private LocalDate fechaActualizacion;
     
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonManagedReference("venta-detalles")
     private List<DetalleVenta> detalles = new ArrayList<>();
     
     public enum MetodoPago {

@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -129,14 +129,14 @@ public class MedicamentoService {
     // Obtener medicamentos próximos a caducar
     public List<Medicamento> obtenerMedicamentosProximosACaducar(int diasAntes) {
         log.info("Obteniendo medicamentos próximos a caducar en {} días", diasAntes);
-        LocalDateTime fechaLimite = LocalDateTime.now().plusDays(diasAntes);
+        LocalDate fechaLimite = LocalDate.now().plusDays(diasAntes);
         return medicamentoRepository.findMedicamentosProximosACaducar(fechaLimite);
     }
     
     // Obtener medicamentos caducados
     public List<Medicamento> obtenerMedicamentosCaducados() {
         log.info("Obteniendo medicamentos caducados");
-        return medicamentoRepository.findMedicamentosCaducados(LocalDateTime.now());
+        return medicamentoRepository.findMedicamentosCaducados(LocalDate.now());
     }
     
     // Actualizar stock de medicamento
@@ -214,9 +214,9 @@ public class MedicamentoService {
         }
         
         // Verificar fecha de caducidad
-        if (medicamento.getFechaCaducidad().isBefore(LocalDateTime.now())) {
+        if (medicamento.getFechaCaducidad().isBefore(LocalDate.now())) {
             alertaService.crearAlertaMedicamentoCaducado(medicamento);
-        } else if (medicamento.getFechaCaducidad().isBefore(LocalDateTime.now().plusDays(30))) {
+        } else if (medicamento.getFechaCaducidad().isBefore(LocalDate.now().plusDays(30))) {
             alertaService.crearAlertaFechaCaducidad(medicamento);
         }
     }

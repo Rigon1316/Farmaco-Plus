@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -58,15 +59,12 @@ public class AlertaService {
     // Actualizar estado de alerta
     public Optional<Alerta> actualizarEstadoAlerta(Long id, Alerta.EstadoAlerta nuevoEstado) {
         log.info("Actualizando estado de alerta {} a {}", id, nuevoEstado);
-        
         return alertaRepository.findById(id)
                 .map(alerta -> {
                     alerta.setEstado(nuevoEstado);
-                    
                     if (nuevoEstado == Alerta.EstadoAlerta.RESUELTA) {
-                        alerta.setFechaResolucion(LocalDateTime.now());
+                        alerta.setFechaResolucion(LocalDate.now());
                     }
-                    
                     Alerta alertaGuardada = alertaRepository.save(alerta);
                     return alertaGuardada;
                 });
@@ -99,9 +97,8 @@ public class AlertaService {
     // Obtener alertas del día
     public List<Alerta> obtenerAlertasDelDia() {
         log.info("Obteniendo alertas del día");
-        LocalDateTime inicioDia = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
-        LocalDateTime finDia = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59).withNano(999999999);
-        return alertaRepository.findByFechaCreacionBetween(inicioDia, finDia);
+        LocalDate hoy = LocalDate.now();
+        return alertaRepository.findByFechaCreacionBetween(hoy, hoy);
     }
     
     // Obtener alertas críticas
@@ -160,7 +157,7 @@ public class AlertaService {
         Alerta alerta = new Alerta();
         alerta.setTitulo("Fecha de Caducidad Próxima - " + medicamento.getNombre());
         alerta.setMensaje("El medicamento " + medicamento.getNombre() + " caduca el " + 
-                medicamento.getFechaCaducidad().toLocalDate() + ". Stock actual: " + medicamento.getStock());
+                medicamento.getFechaCaducidad() + ". Stock actual: " + medicamento.getStock());
         alerta.setTipo(Alerta.TipoAlerta.FECHA_CADUCIDAD);
         alerta.setNivel(Alerta.NivelAlerta.MEDIA);
         alerta.setMedicamento(medicamento);
@@ -175,7 +172,7 @@ public class AlertaService {
         Alerta alerta = new Alerta();
         alerta.setTitulo("Medicamento Caducado - " + medicamento.getNombre());
         alerta.setMensaje("El medicamento " + medicamento.getNombre() + " ha caducado el " + 
-                medicamento.getFechaCaducidad().toLocalDate() + ". Stock actual: " + medicamento.getStock());
+                medicamento.getFechaCaducidad() + ". Stock actual: " + medicamento.getStock());
         alerta.setTipo(Alerta.TipoAlerta.MEDICAMENTO_CADUCADO);
         alerta.setNivel(Alerta.NivelAlerta.CRITICA);
         alerta.setMedicamento(medicamento);

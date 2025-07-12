@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -20,7 +20,7 @@ public interface AlertaRepository extends JpaRepository<Alerta, Long> {
     List<Alerta> findByMedicamentoId(Long medicamentoId);
     
     // Búsqueda por rango de fechas (útil para la IA)
-    List<Alerta> findByFechaCreacionBetween(LocalDateTime fechaInicio, LocalDateTime fechaFin);
+    List<Alerta> findByFechaCreacionBetween(LocalDate fechaInicio, LocalDate fechaFin);
     
     // Consulta flexible para múltiples criterios (útil para la IA)
     @Query("SELECT a FROM Alerta a WHERE " +
@@ -35,7 +35,7 @@ public interface AlertaRepository extends JpaRepository<Alerta, Long> {
             @Param("nivel") Alerta.NivelAlerta nivel,
             @Param("estado") Alerta.EstadoAlerta estado,
             @Param("medicamentoId") Long medicamentoId,
-            @Param("fechaInicio") LocalDateTime fechaInicio,
-            @Param("fechaFin") LocalDateTime fechaFin
+            @Param("fechaInicio") LocalDate fechaInicio,
+            @Param("fechaFin") LocalDate fechaFin
     );
 } 

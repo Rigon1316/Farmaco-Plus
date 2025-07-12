@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -142,7 +143,7 @@ public class VentaService {
     }
     
     // Obtener ventas por rango de fechas
-    public List<Venta> obtenerVentasPorRangoFechas(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
+    public List<Venta> obtenerVentasPorRangoFechas(LocalDate fechaInicio, LocalDate fechaFin) {
         log.info("Obteniendo ventas entre {} y {}", fechaInicio, fechaFin);
         return ventaRepository.findByFechaVentaBetween(fechaInicio, fechaFin);
     }
@@ -150,21 +151,20 @@ public class VentaService {
     // Obtener ventas del día
     public List<Venta> obtenerVentasDelDia() {
         log.info("Obteniendo ventas del día");
-        LocalDateTime inicioDia = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
-        LocalDateTime finDia = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59).withNano(999999999);
-        return ventaRepository.findByFechaVentaBetween(inicioDia, finDia);
+        LocalDate hoy = LocalDate.now();
+        return ventaRepository.findByFechaVentaBetween(hoy, hoy);
     }
     
     // Obtener ventas del mes
     public List<Venta> obtenerVentasDelMes() {
         log.info("Obteniendo ventas del mes");
-        LocalDateTime inicioMes = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
-        LocalDateTime finMes = LocalDateTime.now().withDayOfMonth(LocalDateTime.now().toLocalDate().lengthOfMonth()).withHour(23).withMinute(59).withSecond(59).withNano(999999999);
+        LocalDate inicioMes = LocalDate.now().withDayOfMonth(1);
+        LocalDate finMes = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth());
         return ventaRepository.findByFechaVentaBetween(inicioMes, finMes);
     }
     
     // Calcular total de ventas por período
-    public BigDecimal calcularTotalVentasPorPeriodo(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
+    public BigDecimal calcularTotalVentasPorPeriodo(LocalDate fechaInicio, LocalDate fechaFin) {
         log.info("Calculando total de ventas del {} al {}", fechaInicio, fechaFin);
         return ventaRepository.findByFechaVentaBetween(fechaInicio, fechaFin)
                 .stream()
@@ -215,21 +215,18 @@ public class VentaService {
     }
     
     // Obtener promedio de ventas por día
-    public BigDecimal calcularPromedioVentasPorDia(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
+    public BigDecimal calcularPromedioVentasPorDia(LocalDate fechaInicio, LocalDate fechaFin) {
         log.info("Calculando promedio de ventas por día entre {} y {}", fechaInicio, fechaFin);
         List<Venta> ventas = ventaRepository.findByFechaVentaBetween(fechaInicio, fechaFin)
                 .stream()
                 .filter(v -> v.getEstado() == Venta.EstadoVenta.PAGADA)
                 .collect(Collectors.toList());
-        
         if (ventas.isEmpty()) {
             return BigDecimal.ZERO;
         }
-        
         BigDecimal total = ventas.stream()
                 .map(Venta::getTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        
         return total.divide(BigDecimal.valueOf(ventas.size()), 2, RoundingMode.HALF_UP);
     }
     

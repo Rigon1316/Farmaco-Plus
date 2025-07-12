@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/nlq")
+@RequestMapping("/nlq")
 @RequiredArgsConstructor
 @Slf4j
 public class NlqController {
