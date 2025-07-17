@@ -104,6 +104,7 @@ public class Medicamento {
     private Proveedor proveedor;
 
     @OneToMany(mappedBy = "medicamento")
+    @com.fasterxml.jackson.annotation.JsonManagedReference("medicamento-lotes")
     private List<Lote> lotes;
     
     @CreationTimestamp

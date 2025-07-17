@@ -61,6 +61,7 @@ public class Lote {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "medicamento_id", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonBackReference("medicamento-lotes")
     private Medicamento medicamento;
 
     public enum EstadoLote {
