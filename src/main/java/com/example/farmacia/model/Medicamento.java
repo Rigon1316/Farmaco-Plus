@@ -99,6 +99,13 @@ public class Medicamento {
     @Column(nullable = false)
     private Boolean requiereReceta = false;
     
+    @ManyToOne
+    @JoinColumn(name = "proveedor_id")
+    private Proveedor proveedor;
+
+    @OneToMany(mappedBy = "medicamento")
+    private List<Lote> lotes;
+    
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDate fechaCreacion;

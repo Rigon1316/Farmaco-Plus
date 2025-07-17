@@ -43,6 +43,19 @@ public class AlertaService {
         return alertaRepository.findById(id);
     }
     
+    // Eliminar alerta por ID
+    public boolean eliminarAlerta(Long id) {
+        log.info("Eliminando alerta con ID: {}", id);
+        if (alertaRepository.existsById(id)) {
+            alertaRepository.deleteById(id);
+            log.info("Alerta con ID {} eliminada exitosamente", id);
+            return true;
+        } else {
+            log.warn("No se encontró alerta con ID {} para eliminar", id);
+            return false;
+        }
+    }
+    
     // Crear nueva alerta
     public Alerta crearAlerta(Alerta alerta) {
         log.info("Creando nueva alerta: {}", alerta.getTitulo());

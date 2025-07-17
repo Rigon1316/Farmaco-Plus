@@ -37,6 +37,18 @@ public class AlertaController {
                 .orElse(ResponseEntity.notFound().build());
     }
     
+    // DELETE /api/alertas/{id} - Eliminar alerta por ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarAlerta(@PathVariable Long id) {
+        log.info("DELETE /api/alertas/{} - Eliminando alerta por ID", id);
+        boolean eliminada = alertaService.eliminarAlerta(id);
+        if (eliminada) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    
     // POST /api/alertas - Crear nueva alerta
     @PostMapping
     public ResponseEntity<Alerta> crearAlerta(@Valid @RequestBody Alerta alerta) {
@@ -80,6 +92,8 @@ public class AlertaController {
         List<Alerta> alertas = alertaService.obtenerAlertasPorNivel(nivel);
         return ResponseEntity.ok(alertas);
     }
+
+    
     
     // GET /api/alertas/estado/{estado} - Obtener alertas por estado
     @GetMapping("/estado/{estado}")
