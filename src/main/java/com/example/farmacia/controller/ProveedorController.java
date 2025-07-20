@@ -11,6 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/proveedores")
 @RequiredArgsConstructor
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:5174", "http://localhost:3000"})
 public class ProveedorController {
     private final ProveedorService proveedorService;
 
@@ -22,6 +23,13 @@ public class ProveedorController {
     @GetMapping("/{id}")
     public ResponseEntity<Proveedor> obtenerPorId(@PathVariable Long id) {
         return proveedorService.obtenerPorId(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/ruc/{ruc}")
+    public ResponseEntity<Proveedor> obtenerPorRuc(@PathVariable String ruc) {
+        return proveedorService.obtenerPorRuc(ruc)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

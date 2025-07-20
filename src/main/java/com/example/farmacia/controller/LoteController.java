@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@org.springframework.web.bind.annotation.CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/lotes")
 @RequiredArgsConstructor

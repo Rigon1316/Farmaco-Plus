@@ -27,7 +27,7 @@ public class VentaService {
     private final MedicamentoService medicamentoService;
     private final ClienteService clienteService;
     
-    private static final BigDecimal IVA_RATE = new BigDecimal("0.15"); // 15% IVA
+    public static final BigDecimal IVA_RATE = new BigDecimal("0.15"); // 15% IVA
     
     // Obtener todas las ventas
     public List<Venta> obtenerTodasLasVentas() {

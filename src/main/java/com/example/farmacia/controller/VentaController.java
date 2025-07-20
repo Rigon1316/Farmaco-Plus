@@ -183,4 +183,9 @@ public class VentaController {
         return venta.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/iva")
+    public Map<String, BigDecimal> obtenerIva() {
+        return Map.of("iva", VentaService.IVA_RATE);
+    }
 } 

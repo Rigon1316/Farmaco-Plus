@@ -21,6 +21,10 @@ public class ProveedorService {
         return proveedorRepository.findById(id);
     }
 
+    public Optional<Proveedor> obtenerPorRuc(String ruc) {
+        return proveedorRepository.findByRuc(ruc);
+    }
+
     public Proveedor crear(Proveedor proveedor) {
         return proveedorRepository.save(proveedor);
     }

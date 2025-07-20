@@ -99,7 +99,7 @@ public class Medicamento {
     @Column(nullable = false)
     private Boolean requiereReceta = false;
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "proveedor_id")
     private Proveedor proveedor;
 
