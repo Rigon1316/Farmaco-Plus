@@ -57,7 +57,7 @@ public class Cliente {
     @Column(length = 200)
     private String direccion;
     
-    @Pattern(regexp = "^[0-9]{8}$", message = "El DNI debe tener 8 dígitos")
+    @Pattern(regexp = "^[0-9]{10}$", message = "El DNI debe tener 10 dígitos")
     @Column(unique = true)
     private String dni;
     

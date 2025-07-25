@@ -1,5 +1,4 @@
 package com.example.farmacia.service;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,6 +49,8 @@ Entidades principales:
 - Venta (id, numeroFactura, fechaVenta, subtotal, igv, total, metodoPago, estado, cliente, detalles)
 - DetalleVenta (id, cantidad, precioUnitario, subtotal, medicamento, venta)
 - Alerta (id, titulo, mensaje, tipo, nivel, estado, fechaCreacion, fechaResolucion, medicamento)
+- Lote (id, numeroLote, fechaEntrada, fechaCaducidad, cantidad, estado, fechaCreacion, fechaActualizacion, medicamento)
+- Proveedor (id, nombre, contacto, email, ruc, direccion, estado, fechaCreacion, fechaActualizacion)
 
 Ejemplos:
 Pregunta: ¿Cuáles son los nombres de todos los clientes?
@@ -63,6 +64,21 @@ JPQL: select distinct v.cliente from Venta v join v.detalles d join d.medicament
 
 Pregunta: ¿Cuántas ventas se hicieron hoy?
 JPQL: select count(v) from Venta v where v.fechaVenta >= CURRENT_DATE
+
+Pregunta: ¿Cuáles son los proveedores activos?
+JPQL: select p.nombre from Proveedor p where p.estado = 'ACTIVO'
+
+Pregunta: ¿Qué lotes vencen este mes?
+JPQL: select l.numeroLote from Lote l where l.fechaCaducidad <= CURRENT_DATE + 30
+
+Pregunta: ¿Cuál es el lote con más cantidad?
+JPQL: select l.numeroLote from Lote l order by l.cantidad desc limit 1
+
+Pregunta: ¿Cuál es el medicamento más caro?
+JPQL: select m.nombre from Medicamento m order by m.precio desc limit 1
+
+Pregunta: ¿Cuál es el cliente con más compras?
+JPQL: select c.nombre from Cliente c join c.ventas v group by c order by count(v) desc limit 1
 
 Pregunta: %s
 """.formatted(pregunta);
@@ -195,6 +211,30 @@ Pregunta: %s
         String preguntaLower = pregunta.toLowerCase();
         boolean pideSoloUno = preguntaLower.contains("el más caro") || preguntaLower.contains("el mas caro") || preguntaLower.contains("el más barato") || preguntaLower.contains("el mas barato") || preguntaLower.contains("el primero") || preguntaLower.contains("el último") || preguntaLower.contains("el ultimo") || preguntaLower.contains("el mayor") || preguntaLower.contains("el menor") || preguntaLower.contains("mayor precio") || preguntaLower.contains("menor precio") || preguntaLower.contains("más costoso") || preguntaLower.contains("mas costoso") || preguntaLower.contains("más barato") || preguntaLower.contains("mas barato");
         boolean pideTodos = preguntaLower.contains("todos") || preguntaLower.contains("todas") || preguntaLower.contains("lista") || preguntaLower.contains("muestrame todos") || preguntaLower.contains("muéstrame todos");
+        
+        // Detectar si pide un número específico de resultados
+        int numeroSolicitado = -1;
+        if (preguntaLower.contains("1") || preguntaLower.contains("uno") || preguntaLower.contains("una")) {
+            numeroSolicitado = 1;
+        } else if (preguntaLower.contains("2") || preguntaLower.contains("dos")) {
+            numeroSolicitado = 2;
+        } else if (preguntaLower.contains("3") || preguntaLower.contains("tres")) {
+            numeroSolicitado = 3;
+        } else if (preguntaLower.contains("4") || preguntaLower.contains("cuatro")) {
+            numeroSolicitado = 4;
+        } else if (preguntaLower.contains("5") || preguntaLower.contains("cinco")) {
+            numeroSolicitado = 5;
+        } else if (preguntaLower.contains("6") || preguntaLower.contains("seis")) {
+            numeroSolicitado = 6;
+        } else if (preguntaLower.contains("7") || preguntaLower.contains("siete")) {
+            numeroSolicitado = 7;
+        } else if (preguntaLower.contains("8") || preguntaLower.contains("ocho")) {
+            numeroSolicitado = 8;
+        } else if (preguntaLower.contains("9") || preguntaLower.contains("nueve")) {
+            numeroSolicitado = 9;
+        } else if (preguntaLower.contains("10") || preguntaLower.contains("diez")) {
+            numeroSolicitado = 10;
+        }
 
         // Si es una lista de entidades Medicamento, mostrar solo el nombre (y si pide solo uno, solo el primero)
         Object first = resultList.get(0);
@@ -209,7 +249,9 @@ Pregunta: %s
                     nombres.add(obj.toString());
                 }
             }
-            if (pideSoloUno && !nombres.isEmpty()) {
+            if (numeroSolicitado > 0 && !nombres.isEmpty()) {
+                return String.join(", ", nombres.subList(0, Math.min(numeroSolicitado, nombres.size())));
+            } else if (pideSoloUno && !nombres.isEmpty()) {
                 return nombres.get(0);
             }
             return String.join(", ", nombres);
@@ -228,10 +270,50 @@ Pregunta: %s
                     nombres.add(obj.toString());
                 }
             }
-            if (pideSoloUno && !nombres.isEmpty()) {
+            if (numeroSolicitado > 0 && !nombres.isEmpty()) {
+                return String.join(", ", nombres.subList(0, Math.min(numeroSolicitado, nombres.size())));
+            } else if (pideSoloUno && !nombres.isEmpty()) {
                 return nombres.get(0);
             }
             return String.join(", ", nombres);
+        }
+        // Si es una lista de entidades Proveedor, mostrar solo el nombre (y si pide solo uno, solo el primero)
+        if (first != null && first.getClass().getSimpleName().equals("Proveedor")) {
+            List<String> nombres = new java.util.ArrayList<>();
+            for (Object obj : resultList) {
+                try {
+                    java.lang.reflect.Method getNombre = obj.getClass().getMethod("getNombre");
+                    String nombre = (String) getNombre.invoke(obj);
+                    nombres.add(nombre);
+                } catch (Exception e) {
+                    nombres.add(obj.toString());
+                }
+            }
+            if (numeroSolicitado > 0 && !nombres.isEmpty()) {
+                return String.join(", ", nombres.subList(0, Math.min(numeroSolicitado, nombres.size())));
+            } else if (pideSoloUno && !nombres.isEmpty()) {
+                return nombres.get(0);
+            }
+            return String.join(", ", nombres);
+        }
+        // Si es una lista de entidades Lote, mostrar el número de lote (y si pide solo uno, solo el primero)
+        if (first != null && first.getClass().getSimpleName().equals("Lote")) {
+            List<String> lotes = new java.util.ArrayList<>();
+            for (Object obj : resultList) {
+                try {
+                    java.lang.reflect.Method getNumeroLote = obj.getClass().getMethod("getNumeroLote");
+                    String numeroLote = (String) getNumeroLote.invoke(obj);
+                    lotes.add(numeroLote);
+                } catch (Exception e) {
+                    lotes.add(obj.toString());
+                }
+            }
+            if (numeroSolicitado > 0 && !lotes.isEmpty()) {
+                return String.join(", ", lotes.subList(0, Math.min(numeroSolicitado, lotes.size())));
+            } else if (pideSoloUno && !lotes.isEmpty()) {
+                return lotes.get(0);
+            }
+            return String.join(", ", lotes);
         }
         // Por defecto, mostrar los datos como texto plano separados por coma
         return resultList.stream().map(Object::toString).collect(java.util.stream.Collectors.joining(", "));

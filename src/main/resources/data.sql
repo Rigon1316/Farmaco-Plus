@@ -152,15 +152,10 @@ INSERT INTO alertas (titulo, mensaje, tipo, nivel, estado, medicamento_id, fecha
 ('Demanda Alta - Vitamina C', 'La Vitamina C tiene alta demanda', 'DEMANDA_ALTA', 'MEDIA', 'PENDIENTE', 6, NULL, 'Considerar aumentar stock', NOW()),
 ('Precio Alto - Omega 3', 'El Omega 3 tiene un precio alto comparado con la competencia', 'PRECIO_ALTO', 'BAJA', 'PENDIENTE', 16, NULL, 'Revisar precios', NOW()),
 ('Stock Bajo - Lansoprazol', 'El medicamento Lansoprazol tiene stock bajo (5 unidades)', 'STOCK_BAJO', 'MEDIA', 'PENDIENTE', 12, NULL, 'Revisar inventario', NOW()),
-('Caducidad Próxima - Metformina', 'El medicamento Metformina caduca en 60 días', 'FECHA_CADUCIDAD', 'BAJA', 'PENDIENTE', 9, NULL, 'Monitorear', NOW());
+('Caducidad Próxima - Metformina', 'El medicamento Metformina caduca en 60 días', 'FECHA_CADUCIDAD', 'BAJA', 'PENDIENTE', 9, NULL, 'Monitorear', NOW()); 
 
 -- =====================================================
 -- DATOS DE USUARIOS (para autenticación)
 -- =====================================================
 
 -- Contraseñas simples sin encriptación
-INSERT INTO usuarios (nombre, apellido, email, password, rol, enabled, account_non_expired, account_non_locked, credentials_non_expired) VALUES
-('Admin', 'Sistema', 'admin@farmacia.com', 'admin123', 'ADMIN', true, true, true, true),
-('Juan', 'Farmacéutico', 'farmaceutico@farmacia.com', 'farma123', 'FARMACEUTICO', true, true, true, true),
-('María', 'Vendedora', 'vendedor@farmacia.com', 'venta123', 'VENDEDOR', true, true, true, true),
-('Carlos', 'Inventario', 'inventario@farmacia.com', 'inven123', 'INVENTARIO', true, true, true, true); 
